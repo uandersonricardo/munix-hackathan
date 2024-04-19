@@ -17,16 +17,19 @@ import {
   InputRightElement,
   useToast,
   Tooltip,
+  Avatar,
 } from "@chakra-ui/react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { HiX, HiChevronDown } from "react-icons/hi";
-import { FaBars, FaMagnifyingGlass, FaRegBell, FaRegComment } from "react-icons/fa6";
-import { RiChat3Line, RiFunctionLine, RiNotification2Line, RiSuitcaseLine } from "react-icons/ri";
+import { FaBars, FaMagnifyingGlass, FaRegBell, FaRegComment, FaUser } from "react-icons/fa6";
+import { RiChat3Line, RiFunctionLine, RiMoneyDollarBoxFill, RiMoneyDollarCircleFill, RiNotification2Line, RiSuitcaseLine } from "react-icons/ri";
 import { BsStars } from "react-icons/bs";
 
-import logo from "../assets/react.svg";
+import logo from "../assets/logo.svg";
 import { AuthContext } from "../contexts/auth";
 import api from "../config/api";
+import { LuBell, LuCircleDollarSign, LuCoins, LuMenu, LuMessagesSquare, LuX } from "react-icons/lu";
+import ModalLogin from "./modal-login";
 
 const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
@@ -126,22 +129,22 @@ interface NavItem {
 const NAV_ITEMS: Array<NavItem> = [
   {
     icon: RiSuitcaseLine,
-    label: "Plano Profissional",
+    label: "Início",
     href: "/profissional",
   },
   {
     icon: RiFunctionLine,
-    label: "Meus Anúncios",
+    label: "Coleções",
     href: "/anuncios",
   },
   {
     icon: RiChat3Line,
-    label: "Chats",
+    label: "Histórias",
     href: "/chats",
   },
   {
     icon: RiNotification2Line,
-    label: "Notificações",
+    label: "Partilhe você também",
     href: "/notificacoes",
   },
 ];
@@ -151,15 +154,17 @@ const Header: React.FC = () => {
   const { isOpen, onToggle } = useDisclosure();
   const [loading, setLoading] = useState(false);
   const [input, setInput] = useState("");
-  const [isTooltipOpen, setIsTooltipOpen] = useState(true);
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false);
   const navigate = useNavigate();
   const toast = useToast();
+  const { user, isAuthenticated, logout } = useContext(AuthContext);
+  const { isOpen: isOpenModal, onClose: onCloseModal, onOpen: onOpenModal } = useDisclosure();
 
-  useEffect(() => {
-    setTimeout(() => {
-      setIsTooltipOpen(false);
-    }, 6000);
-  }, []);
+  // useEffect(() => {
+  //   setTimeout(() => {
+  //     setIsTooltipOpen(false);
+  //   }, 6000);
+  // }, []);
 
   useEffect(() => {
     if (fileRef.current) {
@@ -206,178 +211,141 @@ const Header: React.FC = () => {
   return (
     <Box position="sticky">
       <Flex
-        bg={"white"}
+        bg={"las-palmas.500"}
         color={"gray.600"}
         minH={"60px"}
         px={{ base: 4 }}
         align={"center"}
         columnGap="4"
       >
-        <Flex ml={{ base: -2 }} display={{ base: "flex", md: "none" }}>
+        <Flex ml={{ base: -2 }} display={{ base: "flex", md: "flex" }}>
           <IconButton
             // onClick={onToggle}
-            icon={isOpen ? <HiX /> : <FaBars />}
+            icon={isOpen ? <LuX /> : <LuMenu />}
             w="10"
             h="10"
             fontSize="xl"
-            color="neutral.130"
+            color="black"
             variant={"ghost"}
             aria-label={"Toggle Navigation"}
             _hover={{
-              color: "secondary.100",
+              color: "deep-cove.900",
             }}
             _active={{
-              color: "secondary.100",
+              color: "deep-cove.800",
             }}
           />
         </Flex>
 
-        <Flex justify={{ base: "start", md: "start" }} align="center">
+        <Flex justify={{ base: "start", md: "start" }} align="center" flexShrink={0}>
           <RouterLink to={"/"}>
-            <Image src={logo} h="12" />
+            <Image src={logo} h="10" />
           </RouterLink>
         </Flex>
 
         <Stack
-          display={{ base: "flex", md: "none" }}
+          display={{ base: "flex", md: "flex" }}
+          flex={1}
+          direction={"row"}
+          spacing={3}
+          ml="3"
+          align="center"
+        >
+          {NAV_ITEMS.map((navItem, index) => (
+            <React.Fragment key={index}>
+              <Box borderLeftWidth={1} h="8" borderColor="#ACACAC32" />
+              <RouterLink to={navItem.href ?? "#"} key={navItem.label}>
+                <Text fontWeight={600} color="black" _hover={{ color: "deep-cove.900" }} _active={{ color: "deep-cove.800" }} px="4" py="1.5">
+                  {navItem.label}
+                </Text>
+              </RouterLink>
+            </React.Fragment>
+          ))}
+        </Stack>
+
+        <Stack
+          display={{ base: "flex", md: "flex" }}
           justify={"flex-end"}
           direction={"row"}
           spacing={2}
           ml="auto"
           align="center"
         >
-          <IconButton
-            icon={<FaRegComment />}
-            fontSize="2xl"
-            w="12"
-            h="12"
-            color="neutral.130"
-            variant={"ghost"}
-            aria-label={"Chat"}
-            _hover={{
-              color: "secondary.100",
-            }}
-            _active={{
-              color: "secondary.100",
-            }}
-            mx="-2"
-            onClick={() => navigate("/chats/1")}
-          />
-          <IconButton
-            icon={<FaRegBell />}
-            fontSize="2xl"
-            w="12"
-            h="12"
-            color="neutral.130"
-            variant={"ghost"}
-            aria-label={"Notificações"}
-            _hover={{
-              color: "secondary.100",
-            }}
-            _active={{
-              color: "secondary.100",
-            }}
-            mx="-2"
-          />
-          <Button
-            variant="solid"
-            bg="primary.100"
-            size="sm"
-            _hover={{
-              bg: "primary.110",
-            }}
-            _active={{
-              bg: "primary.110",
-            }}
-            borderRadius="full"
-            px="4"
-          >
-            Anunciar
-          </Button>
-        </Stack>
-      </Flex>
-      <Flex
-        bg={"white"}
-        color={"gray.600"}
-        minH={"60px"}
-        pb={{ base: 4 }}
-        px={{ base: 4, md: 20 }}
-        borderBottom={1}
-        borderStyle={"solid"}
-        borderColor={"neutral.90"}
-        align={"center"}
-        columnGap="4"
-      >
-        <Flex flex={{ base: 1, md: "auto" }}>
-          <InputGroup borderColor="neutral.90" size="lg">
-            <Input
-              placeholder="Buscar"
-              pr="20"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <InputRightElement w="20">
-              <IconButton
-                icon={<FaMagnifyingGlass />}
-                fontSize="xl"
-                w="8"
-                h="8"
-                color="neutral.130"
+          {isAuthenticated ? (
+            <>
+              {/* <IconButton
+                icon={<LuMessagesSquare />}
+                fontSize="2xl"
+                w="12"
+                h="12"
+                color="black"
                 variant={"ghost"}
-                aria-label={"Buscar"}
-                borderRadius="full"
+                aria-label={"Chat"}
                 _hover={{
-                  bgColor: "neutral.90",
+                  color: "deep-cove.950",
                 }}
                 _active={{
-                  bgColor: "neutral.90",
+                  color: "deep-cove.900",
                 }}
-                minWidth={0}
-                mr="1"
-                onClick={onSearch}
+                mx="-2"
+                onClick={() => navigate("/chats/1")}
               />
-              <Tooltip
-                label="Experimente nossa nova pesquisa por Inteligência Artificial! Tire a foto do que você procura!"
-                placement="bottom-start"
-                isOpen={isTooltipOpen}
-                bg="neutral.130"
-                hasArrow
-                maxW="240px"
-                isDisabled
-                p="3"
-                borderRadius="lg"
-              >
-                <IconButton
-                  icon={<BsStars />}
-                  fontSize="xl"
-                  w="8"
-                  h="8"
-                  color="secondary.100"
-                  variant={"ghost"}
-                  aria-label={"Buscar"}
-                  borderRadius="full"
-                  _hover={{
-                    bgColor: "neutral.90",
-                  }}
-                  _active={{
-                    bgColor: "neutral.90",
-                  }}
-                  minWidth={0}
-                  onClick={() => {
-                    fileRef.current?.click();
-                  }}
-                  isLoading={loading}
-                />
-              </Tooltip>
-            </InputRightElement>
-            <Input type="file" display="none" ref={fileRef} />
-          </InputGroup>
-        </Flex>
+              <IconButton
+                icon={<LuBell />}
+                fontSize="2xl"
+                w="12"
+                h="12"
+                color="black"
+                variant={"ghost"}
+                aria-label={"Notificações"}
+                _hover={{
+                  color: "deep-cove.950",
+                }}
+                _active={{
+                  color: "deep-cove.900",
+                }}
+                mx="-2"
+              /> */}
+              <Flex align="center">
+                <Avatar size="md" name={user?.name} h="10" w="10" />
+                <Flex ml="3" direction="column" align="start" my="3" color="black">
+                  <Text fontSize="md" fontWeight="bold">{user?.name}</Text>
+                  <Box display="inline-flex" alignItems="center">
+                    <RiMoneyDollarCircleFill />
+                    <Text fontSize="sm" ml="1">{user?.total_points}</Text>
+                    <Text fontSize="sm" mx="2" color="las-palmas.700">&middot;</Text>
+                    <Link fontSize="sm" onClick={logout}>Sair</Link>
+                  </Box>
+                </Flex>
+              </Flex>
+            </>
+          ):(
+            <Button
+              variant="solid"
+              bg="#1451B4"
+              size="sm"
+              _hover={{
+                bg: "primary.110",
+              }}
+              _active={{
+                bg: "primary.110",
+              }}
+              borderRadius="full"
+              px="4"
+              leftIcon={<FaUser />}
+              fontWeight={600}
+              onClick={onOpenModal}
+            >
+              Entrar com o gov.br
+            </Button>
+          )}
+        </Stack>
       </Flex>
 
       <Collapse in={isOpen} animateOpacity>
         <MobileNav />
       </Collapse>
+      <ModalLogin isOpen={isOpenModal} onClose={onCloseModal} />
     </Box>
   );
 };

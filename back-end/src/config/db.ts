@@ -1,8 +1,5 @@
-import { createClient } from "@supabase/supabase-js";
+import prisma from "@prisma/client";
 
-const db = createClient(
-  process.env.SUPABASE_URL ?? "",
-  process.env.SUPABASE_ANON_KEY ?? ""
-);
+const db = new prisma.PrismaClient();
 
 export default db;

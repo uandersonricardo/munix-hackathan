@@ -1,0 +1,153 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           Int     @id @default(autoincrement())
+  email        String  @unique
+  name         String
+  total_points Int
+  verified     Boolean
+
+  achievements  Achievement[]
+  files         File[]
+  contributions Contribution[]
+  discussions   Discussion[]
+  versions      Version[]
+
+  @@map("users")
+}
+
+model Achievement {
+  id         Int      @id @default(autoincrement())
+  value      String
+  code       String?
+  type       String
+  user_id    Int
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id])
+
+  @@index([user_id])
+  @@map("achievements")
+}
+
+model File {
+  id         Int       @id @default(autoincrement())
+  user_id    Int?
+  type       String
+  url        String
+  title      String?
+  date       DateTime?
+  content    String?
+  verified   Boolean   @default(false)
+  draft      Boolean   @default(true)
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+
+  user          User?          @relation(fields: [user_id], references: [id])
+  contributions Contribution[]
+  access_points AccessPoint[]
+  tags          Tag[]
+  discussions   Discussion[]
+  versions      Version[]
+
+  @@index([user_id])
+  @@map("files")
+}
+
+model Version {
+  id         Int       @id @default(autoincrement())
+  user_id    Int
+  file_id    Int
+  title      String?
+  date       DateTime?
+  content    String?
+  created_at DateTime  @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id])
+  file File @relation(fields: [file_id], references: [id])
+
+  access_points AccessPoint[]
+  tags          Tag[]
+
+  @@index([file_id])
+  @@map("versions")
+}
+
+model Contribution {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  file_id    Int
+  points     Int
+  message    String
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  user User @relation(fields: [user_id], references: [id])
+  file File @relation(fields: [file_id], references: [id])
+
+  @@index([user_id])
+  @@index([file_id])
+  @@map("contributions")
+}
+
+model AccessPoint {
+  id            Int @id @default(autoincrement())
+  file_id       Int
+  vocabulary_id Int
+
+  file       File       @relation(fields: [file_id], references: [id])
+  vocabulary Vocabulary @relation(fields: [vocabulary_id], references: [id])
+
+  version Version[]
+
+  @@index([file_id])
+  @@index([vocabulary_id])
+  @@map("access_points")
+}
+
+model Tag {
+  id      Int    @id @default(autoincrement())
+  file_id Int
+  text    String
+
+  file File @relation(fields: [file_id], references: [id])
+
+  version Version[]
+
+  @@index([file_id])
+  @@map("tags")
+}
+
+model Vocabulary {
+  id   Int    @id @default(autoincrement())
+  text String
+
+  access_points AccessPoint[]
+
+  @@map("vocabularies")
+}
+
+model Discussion {
+  id            Int      @id @default(autoincrement())
+  user_id       Int
+  file_id       Int
+  discussion_id Int?
+  message       String
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  user       User        @relation(fields: [user_id], references: [id])
+  file       File        @relation(fields: [file_id], references: [id])
+  discussion Discussion? @relation("DiscussionToDiscussion", fields: [discussion_id], references: [id])
+
+  replies Discussion[] @relation("DiscussionToDiscussion")
+
+  @@index([user_id])
+  @@index([file_id])
+  @@index([discussion_id])
+  @@map("discussions")
+}

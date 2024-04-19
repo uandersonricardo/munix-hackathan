@@ -52,7 +52,7 @@ const Login: React.FC = () => {
 
     setLoading(true);
 
-    login().then(() => {
+    login(1).then(() => {
       setLoading(false);
     });
   };

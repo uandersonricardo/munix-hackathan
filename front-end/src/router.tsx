@@ -5,6 +5,7 @@ import { AuthContext } from "./contexts/auth";
 import Login from "./pages/login";
 import Layout from "./components/layout";
 import Home from "./pages/home";
+import File from "./pages/file";
 
 const RequireAuth = ({ children }: { children: JSX.Element }) => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -20,17 +21,18 @@ const Router: React.FC = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/login" element={<Login />} />
+        {/* <Route path="/login" element={<Login />} /> */}
         <Route
           path="/"
           element={
-            <RequireAuth>
+            // <RequireAuth>
               <Layout />
-            </RequireAuth>
+            // </RequireAuth>
           }
         >
           <Route index element={<Home />} />
-          {/* <Route path="/products/:id" element={<Product />} /> */}
+          <Route path="/files/:id/versions/:versionId" element={<div><File /></div>} />
+          <Route path="/files/:id" element={<File />} />
         </Route>
         {/* <Route path="/chats/:id" element={<Chat />} /> */}
         <Route path="*" element={<Navigate to="/" />} />

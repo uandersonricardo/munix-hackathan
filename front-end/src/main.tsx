@@ -7,6 +7,10 @@ import Router from './router';
 import { AuthProvider } from "./contexts/auth";
 import theme from "./styles/theme";
 
+import 'swiper/css';
+import 'swiper/css/effect-coverflow';
+import 'swiper/css/pagination';
+
 const queryClient = new QueryClient();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
