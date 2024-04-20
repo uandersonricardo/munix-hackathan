@@ -14,6 +14,14 @@ class AuthController {
 
     res.status(200).json(result);
   }
+
+  public async me(req: Request, res: Response) {
+    const result = await this.authService.me(
+      parseInt(req.query.id?.toString() || "1")
+    );
+
+    res.status(200).json(result);
+  }
 }
 
 export default AuthController;

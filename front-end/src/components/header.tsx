@@ -28,7 +28,7 @@ import { BsStars } from "react-icons/bs";
 import logo from "../assets/logo.svg";
 import { AuthContext } from "../contexts/auth";
 import api from "../config/api";
-import { LuBell, LuCircleDollarSign, LuCoins, LuMenu, LuMessagesSquare, LuX } from "react-icons/lu";
+import { LuBell, LuCircleDollarSign, LuCoins, LuLandmark, LuMenu, LuMessagesSquare, LuX } from "react-icons/lu";
 import ModalLogin from "./modal-login";
 
 const DesktopNav = () => {
@@ -311,7 +311,7 @@ const Header: React.FC = () => {
                 <Flex ml="3" direction="column" align="start" my="3" color="black">
                   <Text fontSize="md" fontWeight="bold">{user?.name}</Text>
                   <Box display="inline-flex" alignItems="center">
-                    <RiMoneyDollarCircleFill />
+                    <Avatar bg='deep-cove.950' color="las-palmas.500" fontSize="2xs" h="4" w="4" icon={<LuLandmark />} />
                     <Text fontSize="sm" ml="1">{user?.total_points}</Text>
                     <Text fontSize="sm" mx="2" color="las-palmas.700">&middot;</Text>
                     <Link fontSize="sm" onClick={logout}>Sair</Link>

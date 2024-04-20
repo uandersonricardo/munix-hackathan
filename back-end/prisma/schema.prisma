@@ -38,42 +38,42 @@ model Achievement {
 }
 
 model File {
-  id         Int       @id @default(autoincrement())
-  user_id    Int?
-  type       String
-  url        String
-  title      String?
-  date       DateTime?
-  content    String?
-  verified   Boolean   @default(false)
-  draft      Boolean   @default(true)
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  id                 Int      @id @default(autoincrement())
+  user_id            Int?
+  type               String
+  url                String
+  thumbnail          String?
+  current_version_id Int?
+  draft              Boolean  @default(true)
+  created_at         DateTime @default(now()) @db.Timestamptz(6)
 
-  user          User?          @relation(fields: [user_id], references: [id])
+  user            User?    @relation(fields: [user_id], references: [id])
+  current_version Version? @relation(name: "CurrentVersion", fields: [current_version_id], references: [id])
+
   contributions Contribution[]
-  access_points AccessPoint[]
-  tags          Tag[]
   discussions   Discussion[]
-  versions      Version[]
+  versions      Version[]      @relation(name: "Versions")
 
   @@index([user_id])
   @@map("files")
 }
 
 model Version {
-  id         Int       @id @default(autoincrement())
+  id         Int      @id @default(autoincrement())
   user_id    Int
   file_id    Int
   title      String?
-  date       DateTime?
+  date       String?
   content    String?
-  created_at DateTime  @default(now()) @db.Timestamptz(6)
+  verified   Boolean  @default(false)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
 
   user User @relation(fields: [user_id], references: [id])
-  file File @relation(fields: [file_id], references: [id])
+  file File @relation(name: "Versions", fields: [file_id], references: [id])
 
-  access_points AccessPoint[]
-  tags          Tag[]
+  access_points  AccessPoint[]
+  tags           Tag[]
+  currentToFiles File[]        @relation(name: "CurrentVersion")
 
   @@index([file_id])
   @@map("versions")
@@ -100,7 +100,6 @@ model AccessPoint {
   file_id       Int
   vocabulary_id Int
 
-  file       File       @relation(fields: [file_id], references: [id])
   vocabulary Vocabulary @relation(fields: [vocabulary_id], references: [id])
 
   version Version[]
@@ -114,8 +113,6 @@ model Tag {
   id      Int    @id @default(autoincrement())
   file_id Int
   text    String
-
-  file File @relation(fields: [file_id], references: [id])
 
   version Version[]
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Button, Flex, Heading, IconButton, Input, Stack, StackDivider, Text } from "@chakra-ui/react";
+import { Box, Button, Flex, Heading, IconButton, Image, Input, Stack, StackDivider, Text } from "@chakra-ui/react";
 import { FiMapPin } from "react-icons/fi";
 // import { FaRegHeart } from "react-icons/fa6";
 // import { Swiper, SwiperSlide } from "swiper/react";
@@ -8,13 +8,16 @@ import { FiMapPin } from "react-icons/fi";
 // import { useQuery } from "react-query";
 
 // import api from "../config/api";
-import bg from "../assets/bg.png";
 import { LuCamera, LuFileText, LuGlobe2, LuVideo, LuVolume2 } from "react-icons/lu";
 import Card from "../components/card";
 import Slider from "../components/slider";
 import { recognize } from "../services/speech-recognition";
 import { speak } from "../services/tts";
 import Search from "../components/search";
+
+import bg from "../assets/bg.png";
+import footer from "../assets/footer.png";
+import predio from "../assets/predio.png";
 
 const Home: React.FC = () => {
   // const { user } = useContext(AuthContext);
@@ -36,7 +39,7 @@ const Home: React.FC = () => {
 
   return (
     <Flex direction="column" w="full" minH="full" overflow="auto">
-      <Flex bgImage={bg} w="full" px="16" pt="16" pb="36" position="relative">
+      <Flex bgImage={bg} w="full" px="16" pt="48" pb="48" position="relative">
         <Flex
           w="full"
           maxW="container.xl"
@@ -46,11 +49,11 @@ const Home: React.FC = () => {
           gap="8"
         >
           <Flex flex="1" direction="column" align="start" justify="center">
-            <Heading as="h1" fontSize="3xl" textAlign="left" mb="2" color="white">
-              Contribua com o Arquivo Nacional e seja um sei la oq
+            <Heading as="h1" fontSize="3xl" textAlign="left" mb="2" color="white" pr="32">
+              Contribua com o Arquivo Nacional e seja um Informante Histórico
             </Heading>
             <Text color="las-palmas.500" textAlign="left" mb="6">
-              Ganhe AN Coins para trocar por benefícios*
+              Colabore com a descrição de arquivos e ganhe benefícios!
             </Text>
             <Button
               bg="las-palmas.500"
@@ -170,15 +173,24 @@ const Home: React.FC = () => {
         </Flex>
         <Box w="full" h="full" position="absolute" zIndex="0" left="0" top="0" bgImage="linear-gradient(#0B144966, #0B1449 100%)" />
       </Flex>
-      <Flex w="full" px="16" pt="36" pb="8" position="relative" bg="claret.900">
-        <Flex position="absolute" h="48" top="-24" w="full" mx="-16" justify="center">
+      <Flex w="full" px="16" pt="48" pb="0" position="relative" bg="white">
+        <Flex position="absolute" h="48" top="-24" w="full" mx="-16" align="center" direction="column">
           <Flex w="xl">
             <Slider />
           </Flex>
+          <Box mt="8">
+            <Button bg="deep-cove.950" color="white" size="lg" px="12" _hover={{ bg: "deep-cove.900" }}>
+              Veja mais
+            </Button>
+          </Box>
         </Flex>
-        <Flex w="full" maxW="container.xl" mx="auto">
+        <Flex w="full" maxW="container.xl" mx="auto" pt="8">
           <Search />
         </Flex>
+      </Flex>
+      <Image src={footer} alt="footer" w="full" />
+      <Flex py="12" px="16" bg="claret.900">
+        <Image src={predio} alt="predio" h="20" />
       </Flex>
     </Flex>
   );

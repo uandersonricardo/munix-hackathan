@@ -1,18 +1,11 @@
 import { createContext, ReactNode, useEffect, useState } from "react";
 import { useToast } from "@chakra-ui/react";
-import api from "../config/api";
-
-export interface User {
-  id: string;
-  name: string;
-  email: string;
-  total_points: number;
-}
+import { loginRequest } from "../requests/auth";
 
 export interface AuthContextProps {
   isAuthenticated: boolean;
-  user: User | null;
-  id: string | null;
+  user: AuthLoginResponse | null;
+  id: number | null;
   login: (id: number) => Promise<void>;
   logout: () => void;
 }
@@ -20,13 +13,13 @@ export interface AuthContextProps {
 export const AuthContext = createContext<AuthContextProps>({} as AuthContextProps);
 
 const getIdFromLocalStorage = () => {
-  const token = localStorage.getItem("an-user-id");
+  const id = localStorage.getItem("an-user-id");
 
-  if (!token) {
+  if (!id) {
     return null;
   }
 
-  return token;
+  return parseInt(id);
 };
 
 const getUserFromLocalStorage = () => {
@@ -44,8 +37,8 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const [id, setId] = useState<string | null>(getIdFromLocalStorage());
-  const [user, setUser] = useState<User | null>(getUserFromLocalStorage());
+  const [id, setId] = useState<number | null>(getIdFromLocalStorage());
+  const [user, setUser] = useState<AuthLoginResponse | null>(getUserFromLocalStorage());
   const toast = useToast();
 
   const isAuthenticated = !!id;
@@ -58,10 +51,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const login = async (id: number) => {
     try {
-      const res = await api.post("/auth/login", { id });
+      const res = await loginRequest({ id });
       const user = res.data;
 
-      localStorage.setItem("an-user-id", user.id);
+      localStorage.setItem("an-user-id", user.id.toString());
       localStorage.setItem("an-user", JSON.stringify(user));
       setId(user.id);
       setUser(user);

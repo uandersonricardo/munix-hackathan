@@ -4,7 +4,11 @@ import Card from "./card";
 
 const Search: React.FC = () => {
   return (
-    <Grid templateColumns="repeat(6, 1fr)" gap={4} p="4" w="full">
+    <Grid templateColumns="repeat(5, 1fr)" gap={8} p="4" w="full">
+      <Card />
+      <Card />
+      <Card />
+      <Card />
       <Card />
       <Card />
       <Card />
